@@ -5,6 +5,7 @@ import (
 	"net/http/cookiejar"
 	"net/url"
 	"time"
+	"crypto/tls"
 )
 
 type Session interface {
@@ -31,8 +32,11 @@ type session struct {
 
 // Create a session
 func NewSession() Session {
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
 	jar, _ := cookiejar.New(nil)
-	client := &http.Client{Jar: jar}
+	client := &http.Client{Jar: jar, Transport: tr}
 	s := &session{Client: client}
 	s.cookies = make(map[string]string)
 	return s
