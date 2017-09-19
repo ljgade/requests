@@ -248,3 +248,18 @@ func (this *request) Send() (res Response, err error) {
 	res, err = newResponse(httpResponse)
 	return
 }
+
+func (this *request) SendRequestWithoutParseBody(httpRequest *http.Request) (res Response, err error) {
+	req, err := http.NewRequest(this.method, this.UrlPath(), httpRequest.Body)
+	if err != nil {
+		return
+	}
+	this.session.setCookies(req.URL)
+	req.Header = parseHeaders(this.headers)
+	httpResponse, err := this.session.Do(req)
+	if err != nil {
+		return
+	}
+	res, err = newResponse(httpResponse)
+	return
+}
