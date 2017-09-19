@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"net/url"
+	"crypto/tls"
 )
 
 const (
@@ -15,7 +16,10 @@ var (
 )
 
 func init() {
-	client := &http.Client{}
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Transport: tr}
 	s := &session{Client: client}
 	s.cookies = make(map[string]string)
 	sessionWithoutCookies = s
